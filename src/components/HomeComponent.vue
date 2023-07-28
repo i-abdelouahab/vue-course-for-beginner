@@ -1,83 +1,61 @@
 <template>
-  <SideBar />
-
-    <div>
-      <input v-model="fullName" type="text" name="name" id="">
-    </div>
-
-    <div v-if="fullName=='Jojo'">
-      <p>Hello {{ fullName }}, you're amazing 🌸</p>
-    </div>
-    <div v-else-if="fullName=='Ismail'">
-      <p>Hello {{ fullName }}, you're not amazing</p>
-    </div>
-    <div v-else>
-      <p>Hello {{ fullName }}, you're a robot</p>
-    </div>
-
-    <button @click="displayAlert">Display alert 1</button>
-    <button v-on:click="displayAlert">Display alert 3</button>
-
-    <center><table border="1">
-      <thead>
-        <th>ID</th>
-        <th>Nom</th>
-        <th>Prénom</th>
-        <th>Age</th>
-        <th>Centres d'intérêt</th>
-      </thead>
-      <tbody>
-        <tr v-for="student in students" :key="student.id">
-          <td>{{ student.id }}</td>
-          <td>{{ student.nom }}</td>
-          <td>{{ student.prenom }}</td>
-          <td>{{ student.age }}</td>
-          <td>
-            <ul v-for="(hoby, index) in student.interests" :key="index">
-              <p>{{ hoby }}</p>
-            </ul>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </center>
-
+  <div>
+    <button @click="someText='Blalalalalalal'">Hello</button>
+    {{ someText }}
+    <p>{{ vari }}</p>
+  </div>
+  <!-- <table>
+    <thead>
+      <th>Id</th>
+      <th>UserID</th>
+      <th>Title</th>
+      <th>Completed</th>
+    </thead>
+    <tbody>
+      <tr  v-for="test in state.tests" :key="test.id">
+        <td>{{ test.id }}</td>
+        <td>{{ test.userId }}</td>
+        <td>{{ test.title }}</td>
+        <td>{{ test.completed }}</td>
+      </tr>
+    </tbody>
+  </table> -->
 </template>
 
 <script>
-import SideBar from './SideBar.vue';
+import { onMounted, reactive, ref } from 'vue';
+import axios from 'axios';
 export default {
     name: "HelloComponent",
     props: {
         msg: String
     },
     components: {
-      SideBar,
     },
-    data() {
+    setup() {
+      let someText = ref('Thank you Hajar for attending this formation')
+      let vari = ref('')
+      const state = reactive({
+        tests: {
+          userId: '',
+          id: '',
+          title: '',
+          completed: false
+        },
+      })
+
+      onMounted(() => {
+        axios.get("https://jsonplaceholder.typicode.com/todos")
+          .then((response) => {
+            state.tests = response.data
+            console.log(someText.value)
+          })
+      })
+
       return {
-        fullName: '',
-        students : [
-          {
-            id: 1,
-            prenom: "Hajar",
-            nom: "Ben Stitou",
-            age: 23,
-            interests: ["Design", "Voyage", "Natation", "Lecture"]
-          },
-          {
-            id: 2,
-            prenom: "Ismail",
-            nom: "Abdelouahab",
-            age: 23,
-            interests: ["Voyage", "Coding", "Complicating things", "Camping"]
-          },
-        ]
-      }
-    },
-    methods: {
-      displayAlert: function() {
-        alert("Hello "+this.students[0].prenom+", you're hyper beautiful!")
+        state,
+        someText,
+        vari
       }
     }
 }
